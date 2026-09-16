@@ -63,7 +63,7 @@
                 GITHUB_TOKEN=$(cat ${config.sops.secrets.github-token.path})
 
                 GITHUB_TOKEN=$GITHUB_TOKEN ${pkgs.fluxcd}/bin/flux bootstrap github \
-                    --owner=StacAttacc \
+                    --owner=dev-stacc \
                     --repository=BiggerWorld \
                     --branch=main \
                     --path=k8s/flux \
