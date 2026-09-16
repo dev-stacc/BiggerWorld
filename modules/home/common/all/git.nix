@@ -4,7 +4,7 @@
         settings = {
             user = {
                 name = "Anastasia";
-                email = "cookiedemons@outlook.com";
+                email = "s.valitiana@gmail.com";
             };
             credential.helper = "store --file /home/${username}/.git-credentials";
         };
