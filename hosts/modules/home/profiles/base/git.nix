@@ -3,7 +3,7 @@
         enable = true;
         settings = {
             user = {
-                name = "Anastasia";
+                name = "${username}";
                 email = "s.valitiana@gmail.com";
             };
             credential.helper = "store --file /home/${username}/.git-credentials";
