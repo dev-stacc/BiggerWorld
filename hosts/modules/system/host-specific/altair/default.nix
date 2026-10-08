@@ -1,16 +1,15 @@
 { ... } : {
     imports = [
+        ./graphics.nix
         ./storage.nix
-        ./nfs-server.nix
-        ./media-sync.nix
-        ./backup.nix
-        ./k3s-service.nix
-        ./crowdsec-bouncer.nix
+        ./models.nix
+        ./llama.nix
+        ./power.nix
     ];
 
     boot.loader.grub = {
         enable = true;
-        device = "/dev/disk/by-id/ata-SanDisk_SDSSDRC032G_143235415768";
+        device = "/dev/disk/by-id/PLACEHOLDER";
     };
 
     boot.kernelParams = [
@@ -22,6 +21,6 @@
 
     swapDevices = [{
         device = "/swapfile";
-        size = 8192;
+        size = 16384;
     }];
 }
