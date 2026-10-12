@@ -46,6 +46,7 @@ spec:
                 - ALL
               add:
                 - NET_ADMIN
+                - CHOWN
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -53,6 +54,14 @@ spec:
               mountPath: /gluetun
             - name: tun
               mountPath: /dev/net/tun
+          readinessProbe:
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+            initialDelaySeconds: 20
+            periodSeconds: 20
+            failureThreshold: 3
           resources:
             requests:
               memory: "32Mi"
