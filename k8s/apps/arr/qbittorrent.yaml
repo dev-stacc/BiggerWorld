@@ -24,7 +24,7 @@ spec:
           image: qmcgaw/gluetun:v3.41.3
           env:
             - name: VPN_SERVICE_PROVIDER
-              value: protonvpn
+              value: mullvad
             - name: VPN_TYPE
               value: openvpn
             - name: SERVER_COUNTRIES
