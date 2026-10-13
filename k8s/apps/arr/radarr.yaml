@@ -18,6 +18,9 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: asta
       hostAliases:
+        - ip: 10.43.11.221
+          hostnames:
+            - torrents.${TAILNET_DOMAIN}
         - ip: ${ALGOL_TAILNET_IP}
           hostnames:
             - ntfy.${TAILNET_DOMAIN}
