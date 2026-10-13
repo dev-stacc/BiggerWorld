@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  namespace: arr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: radarr
+  template:
+    metadata:
+      labels:
+        app: radarr
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: asta
+      hostAliases:
+        - ip: ${ALGOL_TAILNET_IP}
+          hostnames:
+            - ntfy.${TAILNET_DOMAIN}
+      containers:
+        - name: radarr
+          image: linuxserver/radarr:6.4.4.10685-ls320
+          ports:
+            - containerPort: 7878
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "100"
+            - name: UMASK
+              value: "002"
+            - name: RADARR__AUTH__METHOD
+              value: External
+            - name: RADARR__AUTH__REQUIRED
+              value: Enabled
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - DAC_OVERRIDE
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            periodSeconds: 10
+            failureThreshold: 4
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 7878
+            periodSeconds: 20
+            failureThreshold: 3
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: radarr-config
+        - name: data
+          hostPath:
+            path: ${MEDIA_HOST_PATH}
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr
+  namespace: arr
+spec:
+  selector:
+    app: radarr
+  ports:
+    - port: 7878
+      targetPort: 7878
+  type: ClusterIP
