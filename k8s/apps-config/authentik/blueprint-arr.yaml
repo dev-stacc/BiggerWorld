@@ -29,3 +29,66 @@ data:
           name: qBittorrent
           slug: qbittorrent
           provider: !KeyOf qbittorrent-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: prowlarr-provider
+        state: present
+        identifiers:
+          name: Prowlarr Provider
+        attrs:
+          name: Prowlarr Provider
+          mode: forward_single
+          external_host: https://prowlarr.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: prowlarr
+        attrs:
+          name: Prowlarr
+          slug: prowlarr
+          provider: !KeyOf prowlarr-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: sonarr-provider
+        state: present
+        identifiers:
+          name: Sonarr Provider
+        attrs:
+          name: Sonarr Provider
+          mode: forward_single
+          external_host: https://sonarr.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: sonarr
+        attrs:
+          name: Sonarr
+          slug: sonarr
+          provider: !KeyOf sonarr-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: radarr-provider
+        state: present
+        identifiers:
+          name: Radarr Provider
+        attrs:
+          name: Radarr Provider
+          mode: forward_single
+          external_host: https://radarr.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: radarr
+        attrs:
+          name: Radarr
+          slug: radarr
+          provider: !KeyOf radarr-provider
