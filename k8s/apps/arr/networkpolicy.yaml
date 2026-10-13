@@ -37,9 +37,11 @@ spec:
         - protocol: TCP
           port: 8096
     - to:
-        - namespaceSelector:
-            matchLabels:
-              kubernetes.io/metadata.name: tailscale
+        - ipBlock:
+            cidr: ${ALGOL_TAILNET_IP}/32
+      ports:
+        - protocol: TCP
+          port: 443
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

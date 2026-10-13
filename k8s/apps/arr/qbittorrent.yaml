@@ -27,6 +27,8 @@ spec:
               value: mullvad
             - name: VPN_TYPE
               value: openvpn
+            - name: VPN_ENDPOINT_IP
+              value: 185.65.134.71
             - name: SERVER_COUNTRIES
               value: Netherlands
             - name: VPN_PORT_FORWARDING
