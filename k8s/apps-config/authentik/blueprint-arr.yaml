@@ -92,3 +92,66 @@ data:
           name: Radarr
           slug: radarr
           provider: !KeyOf radarr-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: lidarr-provider
+        state: present
+        identifiers:
+          name: Lidarr Provider
+        attrs:
+          name: Lidarr Provider
+          mode: forward_single
+          external_host: https://lidarr.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: lidarr
+        attrs:
+          name: Lidarr
+          slug: lidarr
+          provider: !KeyOf lidarr-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: bazarr-provider
+        state: present
+        identifiers:
+          name: Bazarr Provider
+        attrs:
+          name: Bazarr Provider
+          mode: forward_single
+          external_host: https://bazarr.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: bazarr
+        attrs:
+          name: Bazarr
+          slug: bazarr
+          provider: !KeyOf bazarr-provider
+
+      - model: authentik_providers_proxy.proxyprovider
+        id: jellyseerr-provider
+        state: present
+        identifiers:
+          name: Jellyseerr Provider
+        attrs:
+          name: Jellyseerr Provider
+          mode: forward_single
+          external_host: https://requests.${TAILNET_DOMAIN}
+          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
+          invalidation_flow: !Find [authentik_flows.flow, [slug, default-provider-invalidation-flow]]
+
+      - model: authentik_core.application
+        state: present
+        identifiers:
+          slug: jellyseerr
+        attrs:
+          name: Jellyseerr
+          slug: jellyseerr
+          provider: !KeyOf jellyseerr-provider
