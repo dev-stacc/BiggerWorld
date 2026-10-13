@@ -24,6 +24,9 @@ spec:
         - ip: 10.43.167.2
           hostnames:
             - radarr.arr.svc.cluster.local
+        - ip: 10.43.129.95
+          hostnames:
+            - lidarr.arr.svc.cluster.local
         - ip: 10.43.103.113
           hostnames:
             - flaresolverr.arr.svc.cluster.local
