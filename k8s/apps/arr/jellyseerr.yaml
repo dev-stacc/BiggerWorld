@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jellyseerr
+  namespace: arr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: jellyseerr
+  template:
+    metadata:
+      labels:
+        app: jellyseerr
+    spec:
+      nodeSelector:
+        kubernetes.io/hostname: asta
+      containers:
+        - name: jellyseerr
+          image: fallenbagel/jellyseerr:2.7.3
+          ports:
+            - containerPort: 5055
+          env:
+            - name: LOG_LEVEL
+              value: info
+            - name: TZ
+              value: UTC
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - DAC_OVERRIDE
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          startupProbe:
+            httpGet:
+              path: /api/v1/status
+              port: 5055
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /api/v1/status
+              port: 5055
+            periodSeconds: 10
+            failureThreshold: 4
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyseerr-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyseerr
+  namespace: arr
+spec:
+  selector:
+    app: jellyseerr
+  ports:
+    - port: 5055
+      targetPort: 5055
+  type: ClusterIP

@@ -11,4 +11,7 @@ resources:
   - sonarr.yaml
   - radarr.yaml
   - flaresolverr.yaml
+  - lidarr.yaml
+  - bazarr.yaml
+  - jellyseerr.yaml
   - ingress.yaml

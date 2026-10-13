@@ -17,6 +17,16 @@ spec:
     spec:
       nodeSelector:
         kubernetes.io/hostname: asta
+      hostAliases:
+        - ip: 10.43.173.16
+          hostnames:
+            - sonarr.arr.svc.cluster.local
+        - ip: 10.43.167.2
+          hostnames:
+            - radarr.arr.svc.cluster.local
+        - ip: 10.43.103.113
+          hostnames:
+            - flaresolverr.arr.svc.cluster.local
       dnsPolicy: None
       dnsConfig:
         nameservers:
@@ -38,7 +48,7 @@ spec:
             - name: WIREGUARD_MTU
               value: "1360"
             - name: FIREWALL_INPUT_PORTS
-              value: "8080"
+              value: "8080,9696"
             - name: FIREWALL_OUTBOUND_SUBNETS
               value: 10.42.0.0/16,10.43.0.0/16
           envFrom:
@@ -132,7 +142,61 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1"
+        - name: prowlarr
+          image: linuxserver/prowlarr:2.6.5.5623-ls163
+          ports:
+            - containerPort: 9696
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "100"
+            - name: UMASK
+              value: "002"
+            - name: PROWLARR__AUTH__METHOD
+              value: External
+            - name: PROWLARR__AUTH__REQUIRED
+              value: Enabled
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+              add:
+                - CHOWN
+                - SETUID
+                - SETGID
+                - FOWNER
+                - DAC_OVERRIDE
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: prowlarr-config
+              mountPath: /config
+          startupProbe:
+            httpGet:
+              path: /ping
+              port: 9696
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 30
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 9696
+            periodSeconds: 10
+            failureThreshold: 4
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "1"
       volumes:
+        - name: prowlarr-config
+          persistentVolumeClaim:
+            claimName: prowlarr-config
         - name: config
           persistentVolumeClaim:
             claimName: qbittorrent-config
