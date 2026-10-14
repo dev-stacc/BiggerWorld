@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: recyclarr-config
+  namespace: arr
+data:
+  recyclarr.yml: |
+    sonarr:
+      main:
+        base_url: http://sonarr.arr.svc.cluster.local:8989
+        api_key: !env_var SONARR_API_KEY
+        delete_old_custom_formats: true
+        replace_existing_custom_formats: true
+        include:
+          - template: sonarr-quality-definition-series
+          - template: sonarr-v4-quality-profile-web-1080p
+          - template: sonarr-v4-custom-formats-web-1080p
+
+    radarr:
+      main:
+        base_url: http://radarr.arr.svc.cluster.local:7878
+        api_key: !env_var RADARR_API_KEY
+        delete_old_custom_formats: true
+        replace_existing_custom_formats: true
+        include:
+          - template: radarr-quality-definition-movie
+          - template: radarr-quality-profile-hd-bluray-web
+          - template: radarr-custom-formats-hd-bluray-web
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: recyclarr
+  namespace: arr
+spec:
+  schedule: "0 4 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        metadata:
+          labels:
+            app: recyclarr
+        spec:
+          restartPolicy: Never
+          nodeSelector:
+            kubernetes.io/hostname: asta
+          containers:
+            - name: recyclarr
+              image: ghcr.io/recyclarr/recyclarr:8.7.3
+              args:
+                - sync
+              envFrom:
+                - secretRef:
+                    name: recyclarr-api
+                    optional: true
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+                seccompProfile:
+                  type: RuntimeDefault
+              volumeMounts:
+                - name: state
+                  mountPath: /config
+                - name: config
+                  mountPath: /config/recyclarr.yml
+                  subPath: recyclarr.yml
+              resources:
+                requests:
+                  memory: "64Mi"
+                  cpu: "50m"
+                limits:
+                  memory: "256Mi"
+                  cpu: "500m"
+          volumes:
+            - name: state
+              emptyDir: {}
+            - name: config
+              configMap:
+                name: recyclarr-config
