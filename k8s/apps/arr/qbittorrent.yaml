@@ -34,9 +34,10 @@ spec:
       dnsConfig:
         nameservers:
           - 127.0.0.1
-      containers:
+      initContainers:
         - name: gluetun
           image: qmcgaw/gluetun:v3.41.3
+          restartPolicy: Always
           env:
             - name: VPN_SERVICE_PROVIDER
               value: mullvad
@@ -64,7 +65,7 @@ spec:
                 command:
                   - /bin/sh
                   - -c
-                  - (ip rule del table 51820; ip -6 rule del table 51820) || true
+                  - ip -6 rule del table 51820 || true
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -84,6 +85,14 @@ spec:
               mountPath: /gluetun
             - name: tun
               mountPath: /dev/net/tun
+          startupProbe:
+            exec:
+              command:
+                - /gluetun-entrypoint
+                - healthcheck
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 36
           readinessProbe:
             exec:
               command:
@@ -99,6 +108,7 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
+      containers:
         - name: qbittorrent
           image: linuxserver/qbittorrent:5.2.4_v2.0.15-ls480
           ports:
