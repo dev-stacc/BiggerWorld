@@ -40,12 +40,14 @@ spec:
               port: 8191
             initialDelaySeconds: 15
             periodSeconds: 10
+            timeoutSeconds: 10
             failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /
               port: 8191
             periodSeconds: 20
+            timeoutSeconds: 10
             failureThreshold: 4
           volumeMounts:
             - name: dshm
