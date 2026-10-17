@@ -9,8 +9,6 @@ data:
       web-1080p:
         base_url: http://sonarr.arr.svc.cluster.local:8989
         api_key: !env_var SONARR_API_KEY
-        quality_definition:
-          type: series
         quality_profiles:
           - trash_id: 72dae194fc92bf828f32cde7744e51a1  # WEB-1080p
             reset_unmatched_scores:
