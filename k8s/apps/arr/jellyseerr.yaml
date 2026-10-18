@@ -46,12 +46,14 @@ spec:
               port: 5055
             initialDelaySeconds: 20
             periodSeconds: 10
+            timeoutSeconds: 10
             failureThreshold: 30
           readinessProbe:
             httpGet:
               path: /api/v1/status
               port: 5055
             periodSeconds: 10
+            timeoutSeconds: 10
             failureThreshold: 4
           resources:
             requests:
