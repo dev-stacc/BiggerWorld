@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: decluttarr
+  namespace: arr
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: decluttarr
+  template:
+    metadata:
+      labels:
+        app: decluttarr
+    spec:
+      containers:
+        - name: decluttarr
+          image: ghcr.io/manimatter/decluttarr:v2.2.0
+          env:
+            - name: TZ
+              value: America/Toronto
+            - name: SONARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recyclarr-api
+                  key: SONARR_API_KEY
+            - name: RADARR_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: recyclarr-api
+                  key: RADARR_API_KEY
+            - name: SONARR
+              value: |
+                - base_url: "http://sonarr.arr.svc.cluster.local:8989"
+                  api_key: "$(SONARR_API_KEY)"
+            - name: RADARR
+              value: |
+                - base_url: "http://radarr.arr.svc.cluster.local:7878"
+                  api_key: "$(RADARR_API_KEY)"
+            - name: TEST_RUN
+              value: "True"
+            - name: LOG_LEVEL
+              value: INFO
+            - name: TIMER
+              value: "20"
+            - name: MAX_STRIKES
+              value: "18"
+            - name: REMOVE_STALLED
+              value: "True"
+            - name: REMOVE_METADATA_MISSING
+              value: "True"
+            - name: REMOVE_FAILED_IMPORTS
+              value: "True"
+            - name: REMOVE_ORPHANS
+              value: "False"
+            - name: REMOVE_UNMONITORED
+              value: "False"
+            - name: REMOVE_SLOW
+              value: "False"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "25m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
