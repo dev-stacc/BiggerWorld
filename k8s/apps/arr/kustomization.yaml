@@ -16,4 +16,5 @@ resources:
   - jellyseerr.yaml
   - recyclarr.yaml
   - arr-config.yaml
+  - decluttarr.yaml
   - ingress.yaml
