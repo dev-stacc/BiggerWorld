@@ -13,6 +13,15 @@ data:
           - trash_id: 72dae194fc92bf828f32cde7744e51a1  # WEB-1080p
             reset_unmatched_scores:
               enabled: true
+            qualities:
+              - name: WEB 1080p
+                qualities:
+                  - WEBDL-1080p
+                  - WEBRip-1080p
+              - name: WEB 720p
+                qualities:
+                  - WEBDL-720p
+                  - WEBRip-720p
         custom_format_groups:
           add:
             - trash_id: 158188097a58d7687dee647e04af0da3  # [Optional] Golden Rule HD
