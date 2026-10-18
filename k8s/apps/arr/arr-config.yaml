@@ -68,6 +68,31 @@ data:
       echo "  [prowlarr] PROWLARR_API_KEY unset, skipping indexer priorities"
     fi
 
+
+    rename_pending() {
+      label=$$1; base=$$2; key=$$3; listep=$$4; qp=$$5; cmd=$$6; idsf=$$7
+      pending=""
+      for id in $$(curl -sf -m30 "$$base/$$listep" -H "X-Api-Key: $$key" | jq -r '.[].id'); do
+        n=$$(curl -sf -m30 "$$base/rename?$$qp=$$id" -H "X-Api-Key: $$key" | jq 'length') || continue
+        if [ "$$n" -gt 0 ] 2>/dev/null; then pending="$$pending$$id,"; fi
+      done
+      if [ -z "$$pending" ]; then
+        echo "  [$$label] no files need renaming"
+        return 0
+      fi
+      ids=$${pending%,}
+      if curl -sf -m60 -X POST "$$base/command" -H "X-Api-Key: $$key" \
+          -H 'Content-Type: application/json' \
+          -d "{\"name\":\"$$cmd\",\"$$idsf\":[$$ids]}" >/dev/null; then
+        echo "  [$$label] $$cmd queued for ids $$ids"
+      else
+        echo "  [$$label] $$cmd failed"; rc=1
+      fi
+    }
+
+    rename_pending sonarr "$$S" "$$SONARR_API_KEY" series seriesId RenameSeries seriesIds
+    rename_pending radarr "$$R" "$$RADARR_API_KEY" movie movieId RenameMovie movieIds
+
     exit $$rc
 ---
 apiVersion: batch/v1
