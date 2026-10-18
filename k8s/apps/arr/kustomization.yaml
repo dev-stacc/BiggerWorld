@@ -15,4 +15,5 @@ resources:
   - bazarr.yaml
   - jellyseerr.yaml
   - recyclarr.yaml
+  - arr-config.yaml
   - ingress.yaml
