@@ -54,7 +54,18 @@ data:
 
     if [ -n "$${PROWLARR_API_KEY:-}" ]; then
       P=http://prowlarr.arr.svc.cluster.local:9696/api/v1
-      apply prowlarr "$$P" "$$PROWLARR_API_KEY" appprofile/1 '.minimumSeeders=3'
+      apply prowlarr "$$P" "$$PROWLARR_API_KEY" appprofile/1 '.minimumSeeders=3' \
+        > /tmp/appprofile.out 2>&1
+      cat /tmp/appprofile.out
+      if grep -q updated /tmp/appprofile.out; then
+        if curl -sf -m30 -X POST "$$P/command" -H "X-Api-Key: $$PROWLARR_API_KEY" \
+            -H 'Content-Type: application/json' \
+            -d '{"name":"ApplicationIndexerSync"}' >/dev/null; then
+          echo "  [prowlarr] app indexer sync triggered"
+        else
+          echo "  [prowlarr] app indexer sync failed"; rc=1
+        fi
+      fi
       idx=$$(curl -sf -m20 "$$P/indexer" -H "X-Api-Key: $$PROWLARR_API_KEY") || {
         echo "  [prowlarr] indexer GET failed"; idx=''; rc=1; }
       if [ -n "$$idx" ]; then
