@@ -54,6 +54,7 @@ data:
 
     if [ -n "$${PROWLARR_API_KEY:-}" ]; then
       P=http://prowlarr.arr.svc.cluster.local:9696/api/v1
+      apply prowlarr "$$P" "$$PROWLARR_API_KEY" appprofile/1 '.minimumSeeders=3'
       idx=$$(curl -sf -m20 "$$P/indexer" -H "X-Api-Key: $$PROWLARR_API_KEY") || {
         echo "  [prowlarr] indexer GET failed"; idx=''; rc=1; }
       if [ -n "$$idx" ]; then
