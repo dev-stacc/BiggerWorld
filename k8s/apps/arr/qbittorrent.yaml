@@ -105,7 +105,7 @@ spec:
               memory: "32Mi"
               cpu: "50m"
             limits:
-              memory: "128Mi"
+              memory: "512Mi"
               cpu: "500m"
       containers:
         - name: qbittorrent
@@ -250,7 +250,7 @@ spec:
         - name: dshm
           emptyDir:
             medium: Memory
-            sizeLimit: 512Mi
+            sizeLimit: 256Mi
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
