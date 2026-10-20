@@ -54,7 +54,7 @@ data:
 
     if [ -n "$${PROWLARR_API_KEY:-}" ]; then
       P=http://prowlarr.arr.svc.cluster.local:9696/api/v1
-      apply prowlarr "$$P" "$$PROWLARR_API_KEY" appprofile/1 '.minimumSeeders=3' \
+      apply prowlarr "$$P" "$$PROWLARR_API_KEY" appprofile/1 '.minimumSeeders=1' \
         > /tmp/appprofile.out 2>&1
       cat /tmp/appprofile.out
       if grep -q updated /tmp/appprofile.out; then

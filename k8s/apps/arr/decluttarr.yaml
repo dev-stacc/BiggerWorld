@@ -46,7 +46,7 @@ spec:
             - name: TIMER
               value: "20"
             - name: MAX_STRIKES
-              value: "18"
+              value: "6"
             - name: REMOVE_STALLED
               value: "True"
             - name: REMOVE_METADATA_MISSING
