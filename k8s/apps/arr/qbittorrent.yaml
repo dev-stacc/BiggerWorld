@@ -27,9 +27,6 @@ spec:
         - ip: 10.43.129.95
           hostnames:
             - lidarr.arr.svc.cluster.local
-        - ip: 10.43.103.113
-          hostnames:
-            - flaresolverr.arr.svc.cluster.local
       dnsPolicy: None
       dnsConfig:
         nameservers:
@@ -213,7 +210,45 @@ spec:
             limits:
               memory: "512Mi"
               cpu: "1"
+        - name: flaresolverr
+          image: ghcr.io/flaresolverr/flaresolverr:v3.5.2
+          ports:
+            - containerPort: 8191
+          env:
+            - name: LOG_LEVEL
+              value: info
+            - name: TZ
+              value: UTC
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8191
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 30
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "2Gi"
+              cpu: "1"
       volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 512Mi
         - name: prowlarr-config
           persistentVolumeClaim:
             claimName: prowlarr-config
