@@ -23,6 +23,13 @@ data:
                   - WEBDL-720p
                   - WEBRip-720p
               - name: HDTV-720p
+        custom_formats:
+          - trash_ids:
+              - 47435ece6b99a0b477caf360e79ba0bb
+              - 9b64dff695c2115facf1b6ea59c9bd07
+            assign_scores_to:
+              - name: WEB-1080p
+                score: 0
         custom_format_groups:
           add:
             - trash_id: 74aff4168620ed49dcc67e92b2c2a5b4  # [Optional] Language Profiles
