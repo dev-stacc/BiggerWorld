@@ -7,12 +7,17 @@ data:
   desired-priorities.json: |
     {
       "Knaben": 10,
+      "1337x": 15,
+      "Anidex": 15,
       "Anime Tosho": 15,
+      "EZTV": 15,
       "Nyaa.si": 15,
       "SubsPlease": 15,
-      "showRSS": 20,
+      "Tokyo Toshokan": 15,
       "YTS": 20,
+      "showRSS": 20,
       "BigFANGroup": 30,
+      "ExtraTorrent.st": 30,
       "LimeTorrents": 30,
       "The Pirate Bay": 40,
       "TorrentDownload": 40,
