@@ -52,6 +52,17 @@ data:
     apply sonarr "$$S" "$$SONARR_API_KEY" config/mediamanagement "$$MM"
     apply sonarr "$$S" "$$SONARR_API_KEY" delayprofile/1 "$$DP"
 
+    qd=$$(curl -sf -m20 "$$S/qualitydefinition" -H "X-Api-Key: $$SONARR_API_KEY") || {
+      echo "  [sonarr] qualitydefinition GET failed"; qd=''; rc=1; }
+    if [ -n "$$qd" ]; then
+      bid=$$(printf '%s' "$$qd" | jq -r '.[] | select(.quality.name=="Bluray-1080p") | .id')
+      if [ -n "$$bid" ]; then
+        apply sonarr "$$S" "$$SONARR_API_KEY" "qualitydefinition/$$bid" '.minSize=15'
+      else
+        echo "  [sonarr] Bluray-1080p definition not found, skipped"
+      fi
+    fi
+
     R=http://radarr.arr.svc.cluster.local:7878/api/v3
     apply radarr "$$R" "$$RADARR_API_KEY" config/naming '.renameMovies=true'
     apply radarr "$$R" "$$RADARR_API_KEY" config/mediamanagement "$$MM"
