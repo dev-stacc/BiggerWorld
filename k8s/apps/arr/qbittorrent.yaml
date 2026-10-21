@@ -18,6 +18,9 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: asta
       hostAliases:
+        - ip: 127.0.0.1
+          hostnames:
+            - torrents.${TAILNET_DOMAIN}
         - ip: 10.43.173.16
           hostnames:
             - sonarr.arr.svc.cluster.local
