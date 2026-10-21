@@ -15,7 +15,11 @@ data:
               enabled: true
               except:
                 - Season Pack
+            upgrade:
+              allowed: true
+              until_quality: WEB 1080p
             qualities:
+              - name: Bluray-1080p
               - name: WEB 1080p
                 qualities:
                   - WEBDL-1080p
